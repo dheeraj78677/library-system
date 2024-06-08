@@ -14,7 +14,7 @@ const BookList = () => {
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const response = await axios.get(`https://openlibrary.org/search.json?q=programming&limit=96`);
+      const response = await axios.get(`http://openlibrary.org/search.json?q=programming&limit=96`);
       setAllBooks(response.data.docs);
       setFilteredBooks(response.data.docs);
     };

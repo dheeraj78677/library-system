@@ -1,0 +1,38 @@
+.banner {
+    height: 500px;
+    background-image: url('/public/banner.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+  }
+  
+  .banner-content {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+  }
+  
+  .banner-buttons {
+    margin-top: 16px;
+  }
+  
+  .banner-button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .banner-button-primary {
+    background-color: #3f51b5;
+    color: white;
+  }
+  
+  .banner-button-secondary {
+    background-color: #f50057;
+    color: white;
+  }
+  

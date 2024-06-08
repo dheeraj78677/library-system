@@ -9,7 +9,7 @@ const app = express();
 const port = 80;
 
 
-app.use(cors());
+app.use(cors({ origin: 'http://LibrarySystem-891091445.ap-southeast-2.elb.amazonaws.com' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname,'/build')));
 

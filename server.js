@@ -3,11 +3,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
+const path = require('path');
+
 const app = express();
 const port = 5000;
 
+
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname,'/build')));
 
 // Connect to MySQL database
 const db = mysql.createConnection({

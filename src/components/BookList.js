@@ -14,7 +14,7 @@ const BookList = () => {
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const response = await axios.get(`https://openlibrary.org/search.json?q=programming&limit=96`);
+      const response = await axios.get('/api/books');
       setAllBooks(response.data.docs);
       setFilteredBooks(response.data.docs);
     };
@@ -50,7 +50,7 @@ const BookList = () => {
 
     return selectedBooks.map((book, index) => (
       <div key={index} className="book-tile" onClick={() => setSelectedBook(book)}>
-        <img src={`http://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`} alt={`${book.title} cover`} />
+        <img src={`https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`} alt={`${book.title} cover`} />
         <h3>{book.title}</h3>
         <p>Author: {book.author_name ? book.author_name.join(', ') : 'Unknown Author'}</p>
       </div>
@@ -70,7 +70,7 @@ const BookList = () => {
         <p>Author: {selectedBook.author_name ? selectedBook.author_name.join(', ') : 'Unknown Author'}</p>
         <p>Introduction: {selectedBook.first_sentence ? selectedBook.first_sentence : 'No introduction available.'}</p>
         <button onClick={closeModal}>Back</button>
-        <button onClick={() => window.open(`http://openlibrary.org${selectedBook.key}`, '_blank')}>Download</button>
+        <button onClick={() => window.open(`https://openlibrary.org${selectedBook.key}`, '_blank')}>Download</button>
       </Modal>
     );
   };

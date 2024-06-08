@@ -4,10 +4,10 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const axios = require('axios');  // Import axios for making API requests
 
 const app = express();
 const port = 80;
-
 
 app.use(cors({ origin: 'http://LibrarySystem-891091445.ap-southeast-2.elb.amazonaws.com' }));
 app.use(bodyParser.json());
@@ -22,6 +22,7 @@ const db = mysql.createConnection({
   connectTimeout: 10000,
   port: 3306
 });
+
 // Connect to MySQL and handle connection errors
 db.connect((err) => {
     if (err) {
@@ -29,7 +30,7 @@ db.connect((err) => {
       return;
     }
     console.log('Connected to the MySQL database.');
-  
+
     // Create users table if it doesn't exist
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
@@ -41,7 +42,7 @@ db.connect((err) => {
         password VARCHAR(255) NOT NULL
       )
     `;
-  
+
     db.query(createTableQuery, (err, result) => {
       if (err) {
         console.error('Error creating table:', err.message);
@@ -50,31 +51,42 @@ db.connect((err) => {
       }
     });
   });
-  
-  // Endpoint to save the user data after verification
-  app.post('/verify-code', async (req, res) => {
-    const { userData } = req.body;
-    const { firstName, lastName, email, username, password } = userData;
-  
-    try {
-      // Hash the password before saving
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      // Save the user data in the database
-      const sql = `INSERT INTO users (firstName, lastName, email, username, password) VALUES (?, ?, ?, ?, ?)`;
-      db.query(sql, [firstName, lastName, email, username, hashedPassword], (err, result) => {
-        if (err) {
-          console.error('Error inserting user data:', err.message);
-          return res.status(500).send('Error saving user data.');
-        }
-        res.status(200).send('Email verified and user data saved.');
-      });
-    } catch (error) {
-      console.error('Error processing request:', error.message);
-      res.status(500).send('Server error.');
-    }
-  });
-  
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
+
+// Endpoint to save the user data after verification
+app.post('/verify-code', async (req, res) => {
+  const { userData } = req.body;
+  const { firstName, lastName, email, username, password } = userData;
+
+  try {
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save the user data in the database
+    const sql = `INSERT INTO users (firstName, lastName, email, username, password) VALUES (?, ?, ?, ?, ?)`;
+    db.query(sql, [firstName, lastName, email, username, hashedPassword], (err, result) => {
+      if (err) {
+        console.error('Error inserting user data:', err.message);
+        return res.status(500).send('Error saving user data.');
+      }
+      res.status(200).send('Email verified and user data saved.');
+    });
+  } catch (error) {
+    console.error('Error processing request:', error.message);
+    res.status(500).send('Server error.');
+  }
+});
+
+// New endpoint to fetch books from Open Library
+app.get('/api/books', async (req, res) => {
+  try {
+    const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching books from Open Library:', error.message);
+    res.status(500).send('Error fetching books.');
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});

@@ -65,7 +65,7 @@ const SignUpModal = ({ isOpen, onRequestClose }) => {
     e.preventDefault();
     if (userCode === verificationCode) {
       try {
-        await axios.post('https://rmit-library-management/sign-up', formData);
+        await axios.post('https://rmit-library-management.com/sign-up', formData);
         alert('User registered successfully');
         setIsVerificationModalOpen(false);
         onRequestClose();

@@ -7,9 +7,9 @@ const path = require('path');
 const axios = require('axios');
 
 const app = express();
-const port = 80;
+const port = 5000;
 
-app.use(cors({ origin: 'http://rmit-library-management.com' }));
+app.use(cors({ origin: 'https://rmit-library-management.com' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 

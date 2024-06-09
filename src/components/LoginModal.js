@@ -31,6 +31,7 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
+    console.log('Inside log in')
     if (validate()) {
       axios.post('https://rmit-library-management.com/login', formData)
         .then(response => {

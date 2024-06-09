@@ -112,41 +112,41 @@ app.post('/login', async (req, res) => {
 
   const sql = `SELECT * FROM users`;
   db.query(sql, async (err, results) => {
-    if (err) {
-      console.error('Error fetching user:', err.message);
-      return res.status(500).send('Server error.');
-    }
-
-    let userFound = null;
-    for (let user of results) {
-      try {
-        const decryptedUsername = decrypt(user.username);
-        if (decryptedUsername === username) {
-          userFound = user;
-          break;
+        if (err) {
+        console.error('Error fetching user:', err.message);
+        return res.status(500).send('Server error.');
         }
-      } catch (error) {
-        console.error('Error decrypting username:', error.message);
-      }
-    }
 
-    if (!userFound) {
-      console.error('User does not exist:', username);
-      return res.status(404).send({ success: false, message: 'User does not exist.' });
-    }
+        let userFound = null;
+        for (let user of results) {
+        try {
+            const decryptedUsername = decrypt(user.username);
+            if (decryptedUsername === username) {
+            userFound = user;
+            break;
+            }
+        } catch (error) {
+            console.error('Error decrypting username:', error.message);
+        }
+        }
 
-    try {
-      const decryptedPassword = decrypt(userFound.password);
-      if (decryptedPassword !== password) {
-        console.error('Incorrect username or password');
-        return res.status(401).send({ success: false, message: 'Incorrect username or password.' });
-      }
+        if (!userFound) {
+        console.error('User does not exist:', username);
+        return res.status(404).send({ success: false, message: 'User does not exist.' });
+        }
 
-      res.status(200).send({ success: true, user: userFound });
-    } catch (error) {
-      console.error('Error decrypting password:', error.message);
-      res.status(500).send('Server error.');
-    }
+        try {
+        const decryptedPassword = decrypt(userFound.password);
+        if (decryptedPassword !== password) {
+            console.error('Incorrect username or password');
+            return res.status(401).send({ success: false, message: 'Incorrect username or password.' });
+        }
+
+        res.status(200).send({ success: true, user: userFound });
+        } catch (error) {
+        console.error('Error decrypting password:', error.message);
+        res.status(500).send('Server error.');
+        }
   });
 });
 

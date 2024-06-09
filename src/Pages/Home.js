@@ -4,7 +4,6 @@ import LoginModal from '../components/LoginModal';
 import SignUpModal from '../components/SignUpModal';
 import EditProfileModal from '../components/EditProfileModal';
 import ResetPasswordModal from '../components/ResetPasswordModal';
-import './Home.css';
 import BookList from '../components/BookList';
 
 const Home = () => {

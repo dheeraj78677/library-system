@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import './SignUpModal.css'; // Reusing the same CSS
+import ForgotPasswordModal from './ForgotPasswordModal'; // Import the new modal
+
 
 Modal.setAppElement('#root');
 
@@ -11,6 +13,8 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
     password: ''
   });
   const [errors, setErrors] = useState('');
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
+
 
   const validate = () => {
     let tempErrors = {};
@@ -45,6 +49,7 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
   };
 
   return (
+    <>
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="modal" overlayClassName="overlay">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
@@ -64,7 +69,15 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
           <button type="button" onClick={onRequestClose} className="cancel-button">Cancel</button>
         </div>
       </form>
+      <div className="forgot-password">
+          <a href="#!" onClick={() => { setIsForgotPasswordModalOpen(true); onRequestClose(); }}>Forgot Password?</a>
+        </div>
     </Modal>
+    <ForgotPasswordModal
+        isOpen={isForgotPasswordModalOpen}
+        onRequestClose={() => setIsForgotPasswordModalOpen(false)}
+      />
+    </>
   );
 };
 

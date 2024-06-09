@@ -4,64 +4,67 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const axios = require('axios');  // Import axios for making API requests
+const axios = require('axios');
 
 const app = express();
 const port = 80;
 
-app.use(cors({ origin: 'http://LibrarySystem-891091445.ap-southeast-2.elb.amazonaws.com' }));
+app.use(cors({ origin: 'https://your-domain.com' }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname,'/build')));
+app.use(express.static(path.join(__dirname, '/build')));
 
-// Connect to MySQL database
+// Redirect HTTP to HTTPS
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  next();
+});
+
+// MySQL Connection
 const db = mysql.createConnection({
-  host: 'database-1.c1o2ymc0iint.ap-southeast-2.rds.amazonaws.com', // Replace with your RDS endpoint
-  user: 'admin',     // Replace with your RDS username
-  password: 'Test12345', // Replace with your RDS password
-  database: 'database-1',  // Replace with your database name
+  host: 'database-1.c1o2ymc0iint.ap-southeast-2.rds.amazonaws.com',
+  user: 'admin',
+  password: 'Test12345',
+  database: 'database-1',
   connectTimeout: 10000,
   port: 3306
 });
 
-// Connect to MySQL and handle connection errors
 db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err.message);
+    return;
+  }
+  console.log('Connected to the MySQL database.');
+
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      firstName VARCHAR(255) NOT NULL,
+      lastName VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      username VARCHAR(255) NOT NULL UNIQUE,
+      password VARCHAR(255) NOT NULL
+    )
+  `;
+
+  db.query(createTableQuery, (err, result) => {
     if (err) {
-      console.error('Error connecting to the database:', err.message);
-      return;
+      console.error('Error creating table:', err.message);
+    } else {
+      console.log('Users table created or already exists.');
     }
-    console.log('Connected to the MySQL database.');
-
-    // Create users table if it doesn't exist
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        firstName VARCHAR(255) NOT NULL,
-        lastName VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL UNIQUE,
-        username VARCHAR(255) NOT NULL UNIQUE,
-        password VARCHAR(255) NOT NULL
-      )
-    `;
-
-    db.query(createTableQuery, (err, result) => {
-      if (err) {
-        console.error('Error creating table:', err.message);
-      } else {
-        console.log('Users table created or already exists.');
-      }
-    });
   });
+});
 
-// Endpoint to save the user data after verification
+// POST Endpoint to save the user data after verification
 app.post('/verify-code', async (req, res) => {
   const { userData } = req.body;
   const { firstName, lastName, email, username, password } = userData;
 
   try {
-    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Save the user data in the database
     const sql = `INSERT INTO users (firstName, lastName, email, username, password) VALUES (?, ?, ?, ?, ?)`;
     db.query(sql, [firstName, lastName, email, username, hashedPassword], (err, result) => {
       if (err) {
@@ -76,7 +79,7 @@ app.post('/verify-code', async (req, res) => {
   }
 });
 
-// New endpoint to fetch books from Open Library
+// Endpoint to fetch books from Open Library
 app.get('/api/books', async (req, res) => {
   try {
     const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');

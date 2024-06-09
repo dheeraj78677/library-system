@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import emailjs from '@emailjs/browser';
 import axios from 'axios';
+import emailjs from '@emailjs/browser';
 import './SignUpModal.css';
 
 Modal.setAppElement('#root');
 
-const SignupModal = ({ isOpen, onRequestClose }) => {
+const SignUpModal = ({ isOpen, onRequestClose }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -61,19 +61,18 @@ const SignupModal = ({ isOpen, onRequestClose }) => {
     }
   };
 
-  const handleVerificationSubmit = e => {
+  const handleVerificationSubmit = async e => {
     e.preventDefault();
     if (userCode === verificationCode) {
-      axios.post('http://localhost:5000/verify-code', { userData: formData })
-        .then(response => {
-          alert(response.data);
-          setIsVerificationModalOpen(false);
-          onRequestClose();
-        })
-        .catch(error => {
-          console.error('Error verifying code:', error);
-          alert('Failed to save user data.');
-        });
+      try {
+        await axios.post('http://localhost:5000/sign-up', formData);
+        alert('User registered successfully');
+        setIsVerificationModalOpen(false);
+        onRequestClose();
+      } catch (error) {
+        console.error('Error verifying code:', error);
+        alert('Failed to save user data.');
+      }
     } else {
       alert('Invalid verification code.');
     }
@@ -133,4 +132,4 @@ const SignupModal = ({ isOpen, onRequestClose }) => {
   );
 };
 
-export default SignupModal;
+export default SignUpModal;

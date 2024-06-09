@@ -15,6 +15,7 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       const response = await axios.get('/api/books');
+      console.log("hello")
       setAllBooks(response.data.docs);
       setFilteredBooks(response.data.docs);
     };

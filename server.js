@@ -9,7 +9,7 @@ const axios = require('axios');
 const app = express();
 const port = 5000;
 
-app.use(cors({ origin: 'https://rmit-library-management.com' }));
+app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 
@@ -82,7 +82,7 @@ app.post('/verify-code', async (req, res) => {
 // Endpoint to fetch books from Open Library
 app.get('/api/books', async (req, res) => {
   try {
-    const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
+    const response = await axios.get('http://openlibrary.org/search.json?q=programming&limit=96');
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching books from Open Library:', error.message);

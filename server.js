@@ -11,7 +11,7 @@ const app = express();
 const port = 5000;
 
 console.log('Setting up middleware...');
-app.use(cors({ origin: 'https://rmit-library-management.com' }));
+app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 
@@ -76,6 +76,7 @@ app.post('/verify-code', async (req, res) => {
 
 // Endpoint to fetch books from Open Library
 app.get('/api/books', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
   console.log('Received /api/books request');
   const url = 'https://openlibrary.org/search.json?q=programming&limit=96';
 

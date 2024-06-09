@@ -5,32 +5,15 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const axios = require('axios');
-const fs = require('fs');
-const https = require('https');
 const http = require('http');
 
 const app = express();
 const port = 5000;
 
-// SSL options
-const sslOptions = {
-  key: fs.readFileSync('/etc/letsencrypt/live/rmit-library-management.com/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/rmit-library-management.com/fullchain.pem')
-};
-
 console.log('Setting up middleware...');
 app.use(cors({ origin: 'https://rmit-library-management.com' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
-
-// Redirect HTTP to HTTPS
-app.use((req, res, next) => {
-  if (!req.secure) {
-    console.log('Redirecting to HTTPS...');
-    return res.redirect(['https://', req.get('Host'), req.url].join(''));
-  }
-  next();
-});
 
 console.log('Setting up MySQL connection...');
 const db = mysql.createConnection({
@@ -71,6 +54,7 @@ db.connect((err) => {
 
 // POST Endpoint to save the user data after verification
 app.post('/verify-code', async (req, res) => {
+  console.log('Received /verify-code request');
   const { userData } = req.body;
   const { firstName, lastName, email, username, password } = userData;
 
@@ -92,6 +76,7 @@ app.post('/verify-code', async (req, res) => {
 
 // Endpoint to fetch books from Open Library
 app.get('/api/books', async (req, res) => {
+  console.log('Received /api/books request');
   try {
     const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
     res.json(response.data);
@@ -112,6 +97,7 @@ app.get('/api/books', async (req, res) => {
 
 // POST Endpoint to handle login
 app.post('/login', (req, res) => {
+  console.log('Received /login request');
   const { username, password } = req.body;
 
   const sql = `SELECT * FROM users WHERE username = ?`;
@@ -135,23 +121,9 @@ app.post('/login', (req, res) => {
   });
 });
 
-console.log('Starting HTTPS server...');
-const httpsServer = https.createServer(sslOptions, app);
+console.log('Starting HTTP server...');
+const httpServer = http.createServer(app);
 
-httpsServer.listen(port, '0.0.0.0', () => {
-  console.log(`HTTPS Server running on port ${port}`);
-});
-
-// Optionally, start an HTTP server to redirect HTTP to HTTPS
-const httpApp = express();
-
-httpApp.get('*', (req, res) => {
-  res.redirect(`https://${req.headers.host}${req.url}`);
-});
-
-const httpPort = 80;
-const httpServer = http.createServer(httpApp);
-
-httpServer.listen(httpPort, () => {
-  console.log(`HTTP Server running on port ${httpPort} and redirecting to HTTPS`);
+httpServer.listen(port, '0.0.0.0', () => {
+  console.log(`HTTP Server running on port ${port}`);
 });

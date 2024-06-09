@@ -28,7 +28,7 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
   const handleSubmit = e => {
     e.preventDefault();
     if (validate()) {
-      axios.post('https://login.rmit-library-management.com', formData)
+      axios.post('https://rmit-library-management.com/login', formData)
         .then(response => {
           if (response.data.success) {
             setUserInfo(response.data.user);

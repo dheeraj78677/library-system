@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import SignupModal from './SignUpModal';
 import LoginModal from './LoginModal';
 import './Banner.css';

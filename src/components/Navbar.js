@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import LoginModal from './LoginModal';
 import SignUpModal from './SignUpModal';
 import './Navbar.css';

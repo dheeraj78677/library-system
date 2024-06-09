@@ -82,7 +82,7 @@ app.post('/verify-code', async (req, res) => {
 // Endpoint to fetch books from Open Library
 app.get('/api/books', async (req, res) => {
   try {
-    const response = await axios.get('http://openlibrary.org/search.json?q=programming&limit=96');
+    const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching books from Open Library:', error.message);

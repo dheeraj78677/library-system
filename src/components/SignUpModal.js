@@ -65,7 +65,7 @@ const SignUpModal = ({ isOpen, onRequestClose }) => {
     e.preventDefault();
     if (userCode === verificationCode) {
       try {
-        await axios.post('http://localhost:5000/sign-up', formData);
+        await axios.post('http://13.211.79.253:5000/sign-up', formData);
         alert('User registered successfully');
         setIsVerificationModalOpen(false);
         onRequestClose();

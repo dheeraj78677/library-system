@@ -28,7 +28,7 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
   const handleSubmit = e => {
     e.preventDefault();
     if (validate()) {
-      axios.post('http://localhost:5000/login', formData)
+      axios.post('http://13.211.79.253:5000/login', formData)
         .then(response => {
           if (response.data.success) {
             setUserInfo(response.data.user);

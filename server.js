@@ -18,6 +18,7 @@ const sslOptions = {
   cert: fs.readFileSync('/etc/letsencrypt/live/rmit-library-management.com/fullchain.pem')
 };
 
+console.log('Setting up middleware...');
 app.use(cors({ origin: 'https://rmit-library-management.com' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
@@ -25,12 +26,13 @@ app.use(express.static(path.join(__dirname, '/build')));
 // Redirect HTTP to HTTPS
 app.use((req, res, next) => {
   if (!req.secure) {
+    console.log('Redirecting to HTTPS...');
     return res.redirect(['https://', req.get('Host'), req.url].join(''));
   }
   next();
 });
 
-// MySQL Connection
+console.log('Setting up MySQL connection...');
 const db = mysql.createConnection({
   host: 'database-1.c1o2ymc0iint.ap-southeast-2.rds.amazonaws.com',
   user: 'admin',
@@ -43,7 +45,7 @@ const db = mysql.createConnection({
 db.connect((err) => {
   if (err) {
     console.error('Error connecting to the database:', err.message);
-    return;
+    process.exit(1); // Exit the process if there is a database connection error
   }
   console.log('Connected to the MySQL database.');
 
@@ -133,7 +135,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Start HTTPS server
+console.log('Starting HTTPS server...');
 const httpsServer = https.createServer(sslOptions, app);
 
 httpsServer.listen(port, '0.0.0.0', () => {

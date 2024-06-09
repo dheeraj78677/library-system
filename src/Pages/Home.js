@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import Navbar from './Navbar';
-import LoginModal from './LoginModal';
-import SignUpModal from './SignUpModal';
-import EditProfileModal from './EditProfileModal';
-import ResetPasswordModal from './ResetPasswordModal';
-import BookList from './BookList';
+import Navbar from '../components/Navbar';
+import LoginModal from '../components/LoginModal';
+import SignUpModal from '../components/SignUpModal';
+import EditProfileModal from '../components/EditProfileModal';
+import ResetPasswordModal from '../components/ResetPasswordModal';
 import './Home.css';
+import BookList from '../components/BookList';
 
 const Home = () => {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
@@ -45,11 +45,10 @@ const Home = () => {
       <EditProfileModal isOpen={editProfileModalIsOpen} onRequestClose={closeEditProfileModal} userInfo={userInfo} setUserInfo={setUserInfo} />
       <ResetPasswordModal isOpen={resetPasswordModalIsOpen} onRequestClose={closeResetPasswordModal} userInfo={userInfo} />
       <div>
-        <h1 style={{ textAlign: 'center',background:'bisque' }}>All the books</h1>
+        <h1 style={{ textAlign: 'center' }}>All the books</h1>
         <BookList booksPerPage={12} /> {/* 12 books per page, 3 books per row, 4 rows */}
-        </div>  
+      </div>
     </div>
-    
   );
 };
 

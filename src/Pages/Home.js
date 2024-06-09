@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import Banner from '../components/Banner';
 import LoginModal from '../components/LoginModal';
 import SignUpModal from '../components/SignUpModal';
 import EditProfileModal from '../components/EditProfileModal';
@@ -43,6 +44,7 @@ const Home = () => {
       <SignUpModal isOpen={signupModalIsOpen} onRequestClose={closeSignupModal} />
       <EditProfileModal isOpen={editProfileModalIsOpen} onRequestClose={closeEditProfileModal} userInfo={userInfo} setUserInfo={setUserInfo} />
       <ResetPasswordModal isOpen={resetPasswordModalIsOpen} onRequestClose={closeResetPasswordModal} userInfo={userInfo} />
+      <Banner />
       <div>
         <h1 style={{ textAlign: 'center' }}>All the books</h1>
         <BookList booksPerPage={12} /> {/* 12 books per page, 3 books per row, 4 rows */}

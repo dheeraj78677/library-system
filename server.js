@@ -86,6 +86,15 @@ app.get('/api/books', async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching books from Open Library:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Headers:', error.response.headers);
+      console.error('Data:', error.response.data);
+    } else if (error.request) {
+      console.error('Request:', error.request);
+    } else {
+      console.error('Error', error.message);
+    }
     res.status(500).send('Error fetching books.');
   }
 });

@@ -184,6 +184,47 @@ app.post('/reset-password', async (req, res) => {
     });
   });
   
+  // Endpoint to handle profile update
+app.post('/update-profile', async (req, res) => {
+    const { id, firstName, lastName, email, username } = req.body;
+  
+    const sql = `UPDATE users SET firstName = ?, lastName = ?, email = ?, username = ? WHERE id = ?`;
+    db.query(sql, [firstName, lastName, email, username, id], (err, result) => {
+      if (err) {
+        return res.status(500).send('Failed to update profile.');
+      }
+      res.status(200).send('Profile updated successfully.');
+    });
+  });
+  
+  // Endpoint to handle password reset with old password check
+  app.post('/reset-password', async (req, res) => {
+    const { email, oldPassword, newPassword } = req.body;
+  
+    const sql = `SELECT * FROM users WHERE email = ?`;
+    db.query(sql, [email], (err, result) => {
+      if (err || result.length === 0) {
+        return res.status(404).send('Email not found.');
+      }
+  
+      const user = result[0];
+      const decryptedOldPassword = decrypt(user.password);
+  
+      if (decryptedOldPassword !== oldPassword) {
+        return res.status(400).send('Old password is incorrect.');
+      }
+  
+      const encryptedNewPassword = encrypt(newPassword);
+      const updateSql = `UPDATE users SET password = ? WHERE email = ?`;
+      db.query(updateSql, [encryptedNewPassword, email], (err, result) => {
+        if (err) {
+          return res.status(500).send('Failed to reset password.');
+        }
+        res.status(200).send('Password reset successfully.');
+      });
+    });
+  });
+  
 
 app.listen(port, '0.0.0.0',() => {
   console.log(`Server running on port ${port}`);

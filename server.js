@@ -4,7 +4,7 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const axios = require('axios');
+const https = require('https');
 const http = require('http');
 
 const app = express();
@@ -75,24 +75,27 @@ app.post('/verify-code', async (req, res) => {
 });
 
 // Endpoint to fetch books from Open Library
-app.get('/api/books', async (req, res) => {
+app.get('/api/books', (req, res) => {
   console.log('Received /api/books request');
-  try {
-    const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching books from Open Library:', error.message);
-    if (error.response) {
-      console.error('Status:', error.response.status);
-      console.error('Headers:', error.response.headers);
-      console.error('Data:', error.response.data);
-    } else if (error.request) {
-      console.error('Request:', error.request);
-    } else {
-      console.error('Error', error.message);
-    }
+  const url = 'https://openlibrary.org/search.json?q=programming&limit=96';
+
+  https.get(url, (resp) => {
+    let data = '';
+
+    // A chunk of data has been received.
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+      res.json(JSON.parse(data));
+    });
+
+  }).on("error", (err) => {
+    console.error('Error fetching books from Open Library:', err.message);
     res.status(500).send('Error fetching books.');
-  }
+  });
 });
 
 // POST Endpoint to handle login

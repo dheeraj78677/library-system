@@ -64,7 +64,7 @@ const SignupModal = ({ isOpen, onRequestClose }) => {
   const handleVerificationSubmit = e => {
     e.preventDefault();
     if (userCode === verificationCode) {
-      axios.post('http://localhost:5000/verify-code', { userData: formData })
+      axios.post('http://localhost:80/verify-code', { userData: formData })
         .then(response => {
           alert(response.data);
           setIsVerificationModalOpen(false);

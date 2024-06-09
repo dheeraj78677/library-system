@@ -9,7 +9,7 @@ const axios = require('axios');
 const app = express();
 const port = 80;
 
-app.use(cors({ origin: 'https://your-domain.com' }));
+app.use(cors({ origin: 'http://rmit-library-management.com' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 
@@ -102,3 +102,28 @@ app.get('/api/books', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+// POST Endpoint to handle login
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+  
+    const sql = `SELECT * FROM users WHERE username = ?`;
+    db.query(sql, [username], async (err, results) => {
+      if (err) {
+        console.error('Error fetching user:', err.message);
+        return res.status(500).send('Server error.');
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).send({ success: false, message: 'User does not exist.' });
+      }
+  
+      const user = results[0];
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).send({ success: false, message: 'Incorrect password.' });
+      }
+  
+      res.status(200).send({ success: true, user });
+    });
+  });

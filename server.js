@@ -5,9 +5,18 @@ const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const axios = require('axios');
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
 
 const app = express();
 const port = 5000;
+
+// SSL options
+const sslOptions = {
+  key: fs.readFileSync('/etc/letsencrypt/live/rmit-library-management.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/rmit-library-management.com/fullchain.pem')
+};
 
 app.use(cors({ origin: 'https://rmit-library-management.com' }));
 app.use(bodyParser.json());
@@ -15,7 +24,7 @@ app.use(express.static(path.join(__dirname, '/build')));
 
 // Redirect HTTP to HTTPS
 app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
+  if (!req.secure) {
     return res.redirect(['https://', req.get('Host'), req.url].join(''));
   }
   next();
@@ -99,31 +108,48 @@ app.get('/api/books', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
 // POST Endpoint to handle login
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-  
-    const sql = `SELECT * FROM users WHERE username = ?`;
-    db.query(sql, [username], async (err, results) => {
-      if (err) {
-        console.error('Error fetching user:', err.message);
-        return res.status(500).send('Server error.');
-      }
-  
-      if (results.length === 0) {
-        return res.status(404).send({ success: false, message: 'User does not exist.' });
-      }
-  
-      const user = results[0];
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).send({ success: false, message: 'Incorrect password.' });
-      }
-  
-      res.status(200).send({ success: true, user });
-    });
+  const { username, password } = req.body;
+
+  const sql = `SELECT * FROM users WHERE username = ?`;
+  db.query(sql, [username], async (err, results) => {
+    if (err) {
+      console.error('Error fetching user:', err.message);
+      return res.status(500).send('Server error.');
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send({ success: false, message: 'User does not exist.' });
+    }
+
+    const user = results[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({ success: false, message: 'Incorrect password.' });
+    }
+
+    res.status(200).send({ success: true, user });
   });
+});
+
+// Start HTTPS server
+const httpsServer = https.createServer(sslOptions, app);
+
+httpsServer.listen(port, () => {
+  console.log(`HTTPS Server running on port ${port}`);
+});
+
+// Optionally, start an HTTP server to redirect HTTP to HTTPS
+const httpApp = express();
+
+httpApp.get('*', (req, res) => {
+  res.redirect(`https://${req.headers.host}${req.url}`);
+});
+
+const httpPort = 80;
+const httpServer = http.createServer(httpApp);
+
+httpServer.listen(httpPort, () => {
+  console.log(`HTTP Server running on port ${httpPort} and redirecting to HTTPS`);
+});

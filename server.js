@@ -12,7 +12,7 @@ const port = 5000;
 
 app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, '../build')));
 
 // Redirect HTTP to HTTPS
 app.use((req, res, next) => {

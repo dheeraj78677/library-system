@@ -15,12 +15,12 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 
 // Redirect HTTP to HTTPS
-app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
-      return res.redirect(['https://', req.get('Host'), req.url].join(''));
-    }
-    next();
-  });
+// app.use((req, res, next) => {
+//     if (req.headers['x-forwarded-proto'] !== 'https') {
+//       return res.redirect(['https://', req.get('Host'), req.url].join(''));
+//     }
+//     next();
+//   });
 
 // MySQL Connection
 const db = mysql.createConnection({

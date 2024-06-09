@@ -79,7 +79,7 @@ app.get('/api/books', (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     console.log(req);
   console.log('Received /api/books request');
-  const url = 'https://openlibrary.org/search.json?q=programming&limit=96';
+  const url = 'https://openlibrary.org/search.json?q=programming&limit=96/';
 
   https.get(url, (resp) => {
     let data = '';

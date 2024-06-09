@@ -4,18 +4,24 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const https = require('https');
-const http = require('http');
+const axios = require('axios');
 
 const app = express();
 const port = 5000;
 
-console.log('Setting up middleware...');
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: 'https://rmit-library-management.com' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 
-console.log('Setting up MySQL connection...');
+// Redirect HTTP to HTTPS
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  next();
+});
+
+// MySQL Connection
 const db = mysql.createConnection({
   host: 'database-1.c1o2ymc0iint.ap-southeast-2.rds.amazonaws.com',
   user: 'admin',
@@ -28,7 +34,7 @@ const db = mysql.createConnection({
 db.connect((err) => {
   if (err) {
     console.error('Error connecting to the database:', err.message);
-    process.exit(1); // Exit the process if there is a database connection error
+    return;
   }
   console.log('Connected to the MySQL database.');
 
@@ -54,7 +60,6 @@ db.connect((err) => {
 
 // POST Endpoint to save the user data after verification
 app.post('/verify-code', async (req, res) => {
-  console.log('Received /verify-code request');
   const { userData } = req.body;
   const { firstName, lastName, email, username, password } = userData;
 
@@ -75,60 +80,50 @@ app.post('/verify-code', async (req, res) => {
 });
 
 // Endpoint to fetch books from Open Library
-app.get('/api/books', (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    console.log(req);
-  console.log('Received /api/books request');
-  const url = 'https://openlibrary.org/search.json?q=programming&limit=96/';
-
-  https.get(url, (resp) => {
-    let data = '';
-
-    // A chunk of data has been received.
-    resp.on('data', (chunk) => {
-      data += chunk;
-    });
-
-    // The whole response has been received. Print out the result.
-    resp.on('end', () => {
-      res.json(JSON.parse(data));
-    });
-
-  }).on("error", (err) => {
-    console.error('Error fetching books from Open Library:', err.message);
+app.get('/api/books', async (req, res) => {
+  try {
+    const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching books from Open Library:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Headers:', error.response.headers);
+      console.error('Data:', error.response.data);
+    } else if (error.request) {
+      console.error('Request:', error.request);
+    } else {
+      console.error('Error', error.message);
+    }
     res.status(500).send('Error fetching books.');
-  });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
 
 // POST Endpoint to handle login
 app.post('/login', (req, res) => {
-  console.log('Received /login request');
-  const { username, password } = req.body;
-
-  const sql = `SELECT * FROM users WHERE username = ?`;
-  db.query(sql, [username], async (err, results) => {
-    if (err) {
-      console.error('Error fetching user:', err.message);
-      return res.status(500).send('Server error.');
-    }
-
-    if (results.length === 0) {
-      return res.status(404).send({ success: false, message: 'User does not exist.' });
-    }
-
-    const user = results[0];
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).send({ success: false, message: 'Incorrect password.' });
-    }
-
-    res.status(200).send({ success: true, user });
+    const { username, password } = req.body;
+  
+    const sql = `SELECT * FROM users WHERE username = ?`;
+    db.query(sql, [username], async (err, results) => {
+      if (err) {
+        console.error('Error fetching user:', err.message);
+        return res.status(500).send('Server error.');
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).send({ success: false, message: 'User does not exist.' });
+      }
+  
+      const user = results[0];
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).send({ success: false, message: 'Incorrect password.' });
+      }
+  
+      res.status(200).send({ success: true, user });
+    });
   });
-});
-
-console.log('Starting HTTP server...');
-const httpServer = http.createServer(app);
-
-httpServer.listen(port, '0.0.0.0', () => {
-  console.log(`HTTP Server running on port ${port}`);
-});

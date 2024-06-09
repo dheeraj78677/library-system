@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import emailjs from '@emailjs/browser';
-import './SignUpModal.css'; // Reusing the same CSS
+import './EditProfileModal.css';
 
 Modal.setAppElement('#root');
 
 const EditProfileModal = ({ isOpen, onRequestClose, userInfo, setUserInfo }) => {
-  const [formData, setFormData] = useState(userInfo);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    username: '',
+  });
+
   const [errors, setErrors] = useState({});
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [userCode, setUserCode] = useState('');
+
+  useEffect(() => {
+    if (userInfo) {
+      setFormData(userInfo);
+    }
+  }, [userInfo]);
 
   const validate = () => {
     let tempErrors = {};

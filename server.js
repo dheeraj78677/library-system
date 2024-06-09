@@ -77,6 +77,7 @@ app.post('/verify-code', async (req, res) => {
 // Endpoint to fetch books from Open Library
 app.get('/api/books', (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
+    console.log(req);
   console.log('Received /api/books request');
   const url = 'https://openlibrary.org/search.json?q=programming&limit=96';
 

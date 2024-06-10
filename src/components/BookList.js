@@ -15,7 +15,6 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       const response = await axios.get('/api/books');
-      console.log("hello")
       setAllBooks(response.data.docs);
       setFilteredBooks(response.data.docs);
     };
@@ -62,6 +61,22 @@ const BookList = () => {
     setSelectedBook(null);
   };
 
+  const downloadBook = async (bookId) => {
+    try {
+      const response = await axios.get(`/api/download/${bookId}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${selectedBook.title}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error downloading book:', error);
+    }
+  };
+
   const renderBookDetails = () => {
     if (!selectedBook) return null;
 
@@ -71,7 +86,7 @@ const BookList = () => {
         <p>Author: {selectedBook.author_name ? selectedBook.author_name.join(', ') : 'Unknown Author'}</p>
         <p>Introduction: {selectedBook.first_sentence ? selectedBook.first_sentence : 'No introduction available.'}</p>
         <button onClick={closeModal}>Back</button>
-        <button onClick={() => window.open(`https://openlibrary.org${selectedBook.key}`, '_blank')}>Download</button>
+        <button onClick={() => downloadBook(selectedBook.key)}>Download</button>
       </Modal>
     );
   };

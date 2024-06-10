@@ -6,7 +6,7 @@ import ForgotPasswordModal from './ForgotPasswordModal'; // Import the new modal
 
 Modal.setAppElement('#root');
 
-const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
+const LoginModal = ({ isOpen, onRequestClose, setUserInfo , isLoggedIn}) => {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -36,6 +36,8 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
             setUserInfo(response.data.user); // Set user info on successful login
             console.log('userInfo ', response.data.user);
             onRequestClose();
+            isLoggedIn = true;
+            console.log('is logged in ',isLoggedIn);
           } else {
             setErrors({ form: 'User does not exist or incorrect credentials.' });
           }
@@ -44,6 +46,7 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
           console.error('Error logging in:', error);
           setErrors({ form: 'Server error, please try again later.' });
         });
+       
     }
   };
 

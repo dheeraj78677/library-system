@@ -41,7 +41,7 @@ const Home = () => {
           onResetPassword={openResetPasswordModal}
           openLoginModal={openLoginModal}
           openSignupModal={openSignupModal}
-          setUserInfo={setUserInfo} 
+          
         />
       <LoginModal isOpen={loginModalIsOpen} onRequestClose={closeLoginModal} setUserInfo={setUserInfo} />
       <SignUpModal isOpen={signupModalIsOpen} onRequestClose={closeSignupModal} />

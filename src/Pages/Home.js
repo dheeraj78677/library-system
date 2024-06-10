@@ -32,14 +32,16 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar
-        isLoggedIn={!!userInfo}
-        onLogout={handleLogout}
-        onEditProfile={openEditProfileModal}
-        onResetPassword={openResetPasswordModal}
-        openLoginModal={openLoginModal}
-        openSignupModal={openSignupModal}
-      />
+       {!userInfo && (
+        <Navbar
+          isLoggedIn={!!userInfo}
+          onLogout={handleLogout}
+          onEditProfile={openEditProfileModal}
+          onResetPassword={openResetPasswordModal}
+          openLoginModal={openLoginModal}
+          openSignupModal={openSignupModal}
+        />
+      )}
       <LoginModal isOpen={loginModalIsOpen} onRequestClose={closeLoginModal} setUserInfo={setUserInfo} />
       <SignUpModal isOpen={signupModalIsOpen} onRequestClose={closeSignupModal} />
       <EditProfileModal isOpen={editProfileModalIsOpen} onRequestClose={closeEditProfileModal} userInfo={userInfo} setUserInfo={setUserInfo} />

@@ -1,8 +1,11 @@
 import React from 'react';
 import './Navbar.css';
 
-const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal }) => {
+const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal,userInfo }) => {
   console.log('isLoggedIn ', isLoggedIn);
+  console.log('userInfo ', userInfo);
+  console.log('admin ', userInfo.isAdmin);
+
 
   return (
     <div className="navbar">
@@ -13,6 +16,9 @@ const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLog
           <>
             <button className="navbar-button" onClick={onEditProfile}>Edit Profile</button>
             <button className="navbar-button" onClick={onResetPassword}>Reset Password</button>
+            {userInfo?.isAdmin === 1 && (
+              <button className="navbar-button" onClick={() => alert('Manage Users Clicked!')}>Manage Users</button>
+            )}
             <button className="navbar-button" onClick={onLogout}>Logout</button>
           </>
         ) : (

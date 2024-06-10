@@ -249,7 +249,7 @@ app.get('/api/download-sample', (req, res) => {
 
   // Route to fetch all users
 app.get('/users', (req, res) => {  
-    const sql = 'SELECT id, firstName, lastName, email FROM users where isadmin == 0';
+    const sql = 'SELECT id, firstName, lastName, email FROM users';
     db.query(sql, (err, results) => {
       if (err) {
         console.error('Error fetching users:', err.message);

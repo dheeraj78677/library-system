@@ -14,7 +14,7 @@ const BookList = ({ userInfo }) => {
   const booksPerPage = 16; // 4 rows x 4 books per row
 
   useEffect(() => {
-    const fetchBooks = async () => {s
+    const fetchBooks = async () => {
       const response = await axios.get('/api/books');
       console.log("hello")
       setAllBooks(response.data.docs);

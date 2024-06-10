@@ -46,11 +46,12 @@ const Home = () => {
       <ResetPasswordModal isOpen={resetPasswordModalIsOpen} onRequestClose={closeResetPasswordModal} userInfo={userInfo} />
       <Banner />
       <div>
-        <h1 style={{ textAlign: 'center' }}>All the books</h1>
+        <h1 style={{ textAlign: 'center' }}>Explore our book collection</h1>
         <BookList booksPerPage={12} /> {/* 12 books per page, 3 books per row, 4 rows */}
       </div>
     </div>
   );
+  
 };
 
 export default Home;

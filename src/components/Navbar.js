@@ -2,6 +2,7 @@ import React from 'react';
 import './Navbar.css';
 
 const Navbar = ({ isLoggedIn, onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal }) => {
+  console.log('isLoggedIn ',isLoggedIn);
   return (
     <div className="navbar">
       <img src={`${process.env.PUBLIC_URL}/logo.jpg`} alt="RMIT Logo" />

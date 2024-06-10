@@ -34,6 +34,7 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
         .then(response => {
           if (response.data.success) {
             setUserInfo(response.data.user); // Set user info on successful login
+            console.log('userInfo ', response.data.user);
             onRequestClose();
           } else {
             setErrors({ form: 'User does not exist or incorrect credentials.' });

@@ -47,7 +47,7 @@ db.connect((err) => {
       firstName VARCHAR(255) NOT NULL,
       lastName VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
-      username VARCHAR(255) NOT NULL,
+      username VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
       isadmin BOOLEAN
     )
@@ -125,13 +125,14 @@ app.post('/login', async (req, res) => {
             const decryptedUsername = decrypt(user.username);
             if (decryptedUsername === username) {
             userFound = user;
+            userFound.username= decryptedUsername;
             break;
             }
         } catch (error) {
             console.error('Error decrypting username:', error.message);
         }
         }
-
+        
         if (!userFound) {
         console.error('User does not exist:', username);
         return res.status(404).send({ success: false, message: 'User does not exist.' });

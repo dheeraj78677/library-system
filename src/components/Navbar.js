@@ -16,7 +16,7 @@ const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLog
           <>
             <button className="navbar-button" onClick={onEditProfile}>Edit Profile</button>
             <button className="navbar-button" onClick={onResetPassword}>Reset Password</button>
-            {userInfo?.isAdmin === 1 && (
+            {userInfo.isAdmin === 1 && (
               <button className="navbar-button" onClick={() => alert('Manage Users Clicked!')}>Manage Users</button>
             )}
             <button className="navbar-button" onClick={onLogout}>Logout</button>

@@ -246,6 +246,32 @@ app.get('/api/download-sample', (req, res) => {
         }
     });
   });
+
+  // Route to fetch all users
+app.get('/users', (req, res) => {  
+    const sql = 'SELECT id, firstName, lastName, email FROM users';
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error fetching users:', err.message);
+        return res.status(500).send('Server error.');
+      }
+      res.status(200).send({ success: true, users: results });
+      console.log('Number of users found:', results.length);
+    });
+  });
+  
+  // Route to delete selected users
+  app.post('/deleteUsers', (req, res) => {
+    const { userIds } = req.body;
+    const sql = 'DELETE FROM users WHERE id IN (?)';
+    db.query(sql, [userIds], (err, result) => {
+      if (err) {
+        console.error('Error deleting user data:', err.message, err.sqlMessage);
+        return res.status(500).send('Error deleting user data.');
+      }
+      res.status(200).send({ message: 'User(s) deleted successfully' });
+    });
+  });
   
 app.listen(port, '0.0.0.0',() => {
   console.log(`Server running on port ${port}`);

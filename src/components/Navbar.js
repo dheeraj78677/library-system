@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Navbar.css';
+import ManageUsersModal from './ManageUsersModal'; // Import the ManageUsersModal
+
 
 const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal,userInfo }) => {
   console.log('isLoggedIn ', isLoggedIn);
@@ -7,7 +9,10 @@ const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLog
 
 
 
+  const [isManageUsersModalOpen, setIsManageUsersModalOpen] = useState(false);
 
+  const openManageUsersModal = () => setIsManageUsersModalOpen(true);
+  const closeManageUsersModal = () => setIsManageUsersModalOpen(false);
   return (
     <div className="navbar">
       <img src={`${process.env.PUBLIC_URL}/logo.jpg`} alt="RMIT Logo" className="navbar-logo" />
@@ -18,7 +23,7 @@ const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLog
             <button className="navbar-button" onClick={onEditProfile}>Edit Profile</button>
             <button className="navbar-button" onClick={onResetPassword}>Reset Password</button>
             {userInfo.isadmin === 1 && (
-              <button className="navbar-button" onClick={() => alert('Manage Users Clicked!')}>Manage Users</button>
+              <button className="navbar-button" onClick={openManageUsersModal}>Manage Users</button>
             )}
             <button className="navbar-button" onClick={onLogout}>Logout</button>
           </>
@@ -29,6 +34,7 @@ const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLog
           </>
         )}
       </div>
+      <ManageUsersModal isOpen={isManageUsersModalOpen} onRequestClose={closeManageUsersModal} />
     </div>
   );
 };

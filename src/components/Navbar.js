@@ -13,14 +13,21 @@ const Navbar = ({ isLoggedIn, onLogout, onEditProfile, onResetPassword, openLogi
       <h1 className="navbar-title">RMIT LIBRARY</h1>
       <div className="navbar-buttons"></div>
       <div className="navbar-buttons">
-
+      {isLoggedIn && (
+            <div>
             <button className="navbar-button" onClick={onEditProfile}>Edit Profile</button>
             <button className="navbar-button" onClick={onResetPassword}>Reset Password</button>
             <button className="navbar-button" onClick={onLogout}>Logout</button>
-          
-       
-            <button className="navbar-button" onClick={openLoginModal}>Login</button>
-            <button className="navbar-button" onClick={openSignupModal}>Sign Up</button>
+            </div>
+             )}
+
+      {!isLoggedIn && (
+            <div>
+             <button className="navbar-button" onClick={openLoginModal}>Login</button>
+             <button className="navbar-button" onClick={openSignupModal}>Sign Up</button>
+            </div>
+       )}
+            
       </div>
   
     </div>

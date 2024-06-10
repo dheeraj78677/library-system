@@ -30,11 +30,11 @@ const Home = () => {
     setUserInfo(null);
   };
 
-  console.log(userInfo);
+
 
   return (
     <div>
-       {!userInfo && (
+       {userInfo && (
         <Navbar
           isLoggedIn={!!userInfo}
           onLogout={handleLogout}

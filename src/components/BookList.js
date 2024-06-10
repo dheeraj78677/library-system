@@ -46,6 +46,7 @@ const BookList = ({ userInfo }) => {
   };
   
     const downloadSamplePDF = async () => {
+        console.log('download clicked');
     try {
       const response = await axios.get('/api/download-sample', {
         responseType: 'blob',

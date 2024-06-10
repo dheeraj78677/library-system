@@ -4,7 +4,7 @@ import './Navbar.css';
 const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal,userInfo }) => {
   console.log('isLoggedIn ', isLoggedIn);
   console.log('userInfo ', userInfo);
-  console.log('admin ', userInfo.isAdmin);
+
 
 
   return (

@@ -32,7 +32,7 @@ const Home = () => {
 
   return (
     <div>
-       {!userInfo && (
+       {userInfo && (
         <Navbar
           isLoggedIn={!!userInfo}
           onLogout={handleLogout}

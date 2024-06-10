@@ -33,9 +33,11 @@ const LoginModal = ({ isOpen, onRequestClose, setUserInfo }) => {
     e.preventDefault();
     console.log('Inside log in')
     if (validate()) {
+        
       axios.post('https://rmit-library-management.com/login', formData)
         .then(response => {
           if (response.data.success) {
+            console.log('Login Successful');
             setUserInfo(response.data.user);
             onRequestClose();
           } else {

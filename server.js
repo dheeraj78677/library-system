@@ -143,6 +143,7 @@ app.post('/login', async (req, res) => {
         }
 
         res.status(200).send({ success: true, user: userFound });
+        console.log('user found ',userFound)
         } catch (error) {
         console.error('Error decrypting password:', error.message);
         res.status(500).send('Server error.');

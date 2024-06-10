@@ -15,8 +15,8 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       const response = await axios.get('/api/books');
-      setAllBooks(response.data.docs);
-      setFilteredBooks(response.data.docs);
+      setAllBooks(response.data.results);
+      setFilteredBooks(response.data.results);
     };
 
     fetchBooks();
@@ -38,7 +38,7 @@ const BookList = () => {
 
     const filtered = allBooks.filter(book => 
       (book.title && book.title.toLowerCase().includes(query)) ||
-      (book.author_name && book.author_name.join(', ').toLowerCase().includes(query))
+      (book.authors && book.authors.some(author => author.name.toLowerCase().includes(query)))
     );
     setFilteredBooks(filtered);
     setCurrentPage(1); // Reset to the first page
@@ -50,9 +50,9 @@ const BookList = () => {
 
     return selectedBooks.map((book, index) => (
       <div key={index} className="book-tile" onClick={() => setSelectedBook(book)}>
-        <img src={`https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`} alt={`${book.title} cover`} />
+        <img src={`https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.cover.medium.jpg`} alt={`${book.title} cover`} />
         <h3>{book.title}</h3>
-        <p>Author: {book.author_name ? book.author_name.join(', ') : 'Unknown Author'}</p>
+        <p>Author: {book.authors.map(author => author.name).join(', ')}</p>
       </div>
     ));
   };
@@ -69,7 +69,7 @@ const BookList = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${selectedBook.title}.pdf`);
+      link.setAttribute('download', `${selectedBook.title}.zip`);
       document.body.appendChild(link);
       link.click();
     } catch (error) {
@@ -83,10 +83,9 @@ const BookList = () => {
     return (
       <Modal isOpen={!!selectedBook} onRequestClose={closeModal} className="book-modal" overlayClassName="book-overlay">
         <h2>{selectedBook.title}</h2>
-        <p>Author: {selectedBook.author_name ? selectedBook.author_name.join(', ') : 'Unknown Author'}</p>
-        <p>Introduction: {selectedBook.first_sentence ? selectedBook.first_sentence : 'No introduction available.'}</p>
+        <p>Author: {selectedBook.authors.map(author => author.name).join(', ')}</p>
         <button onClick={closeModal}>Back</button>
-        <button onClick={() => downloadBook(selectedBook.key)}>Download</button>
+        <button onClick={() => downloadBook(selectedBook.id)}>Download</button>
       </Modal>
     );
   };

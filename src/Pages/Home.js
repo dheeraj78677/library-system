@@ -30,6 +30,8 @@ const Home = () => {
     setUserInfo(null);
   };
 
+  console.log(userInfo);
+
   return (
     <div>
        {userInfo && (

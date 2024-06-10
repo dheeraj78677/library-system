@@ -5,6 +5,9 @@ const mysql = require('mysql2');
 const crypto = require('crypto');
 const path = require('path');
 const axios = require('axios');
+const PDFDocument = require('pdfkit');
+const fs = require('fs'); 
+
 require('dotenv').config();
 
 const app = express();
@@ -226,7 +229,27 @@ app.post('/update-profile', async (req, res) => {
     });
   });
   
-
+  // Endpoint to generate and download a sample PDF
+app.get('/api/download-sample', (req, res) => {
+    const doc = new PDFDocument();
+    const filePath = path.join(__dirname, 'sample.pdf');
+  
+    doc.pipe(fs.createWriteStream(filePath));
+    doc.text('This is a sample PDF for download.', {
+      align: 'center',
+    });
+    doc.end();
+  
+    doc.on('finish', () => {
+      res.download(filePath, 'sample.pdf', (err) => {
+        if (err) {
+          console.error('Error downloading sample PDF:', err.message);
+        }
+        fs.unlinkSync(filePath); // Delete the file after download
+      });
+    });
+  });
+  
 app.listen(port, '0.0.0.0',() => {
   console.log(`Server running on port ${port}`);
 });

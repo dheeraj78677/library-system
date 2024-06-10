@@ -17,7 +17,7 @@ const ManageUsersModal = ({ isOpen, onRequestClose }) => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/users'); // Adjust URL as needed
+      const response = await axios.get('https://rmit-library-management.com/users'); // Adjust URL as needed
       if (response.data.success) {
         setUsers(response.data.users);
       } else {
@@ -38,7 +38,7 @@ const ManageUsersModal = ({ isOpen, onRequestClose }) => {
 
   const handleDeleteUsers = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/deleteUsers', { userIds: selectedUsers }); // Adjust URL as needed
+      const response = await axios.post('https://rmit-library-management.com/deleteUsers', { userIds: selectedUsers }); // Adjust URL as needed
       if (response.status === 200) {
         setSelectedUsers([]);
         fetchUsers(); // Fetch updated list of users after deletion

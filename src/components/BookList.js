@@ -5,7 +5,7 @@ import './BookList.css';
 
 Modal.setAppElement('#root');
 
-const BookList = () => {
+const BookList = ({ userInfo }) => {
   const [allBooks, setAllBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,7 +87,7 @@ const BookList = () => {
         <p>Author: {selectedBook.author_name ? selectedBook.author_name.join(', ') : 'Unknown Author'}</p>
         <p>Introduction: {selectedBook.first_sentence ? selectedBook.first_sentence : 'No introduction available.'}</p>
         <button onClick={closeModal}>Back</button>
-        <button onClick={downloadSamplePDF}>Download</button>
+        <button onClick={downloadSamplePDF} disabled={!userInfo}>Download</button>
       </Modal>
     );
   };

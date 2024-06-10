@@ -49,7 +49,7 @@ const Home = () => {
       <Banner />
       <div>
         <h1 style={{ textAlign: 'center' }}>Explore our book collection</h1>
-        <BookList booksPerPage={12} /> {/* 12 books per page, 3 books per row, 4 rows */}
+        <BookList booksPerPage={12} userInfo={userInfo} /> {/* Pass userInfo as a prop */}
       </div>
     </div>
   );

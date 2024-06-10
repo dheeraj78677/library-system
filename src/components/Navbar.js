@@ -6,7 +6,7 @@ const Navbar = ({ isLoggedIn, onLogout, onEditProfile, onResetPassword, openLogi
   // if (isLoggedIn) {
   //   return null;
   // }
-
+  console.log('isLoggedIn ',isLoggedIn);
   return (
     <div className="navbar">
       <img src={`${process.env.PUBLIC_URL}/logo.jpg`} alt="RMIT Logo" className="navbar-logo" />

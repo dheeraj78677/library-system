@@ -30,32 +30,31 @@ const Home = () => {
     setUserInfo(null);
   };
 
-  const handleLogin = (user) => {
-    setUserInfo(user);
-  };
+
 
   return (
     <div>
-      <Navbar
-        isLoggedIn={!!userInfo}
-        userInfo={userInfo}
-        onLogout={handleLogout}
-        onEditProfile={openEditProfileModal}
-        onResetPassword={openResetPasswordModal}
-        openLoginModal={openLoginModal}
-        openSignupModal={openSignupModal}
-      />
-      <LoginModal isOpen={loginModalIsOpen} onRequestClose={closeLoginModal} setUserInfo={handleLogin} />
+        <Navbar
+          isLoggedIn={!!userInfo}
+          onLogout={handleLogout}
+          onEditProfile={openEditProfileModal}
+          onResetPassword={openResetPasswordModal}
+          openLoginModal={openLoginModal}
+          openSignupModal={openSignupModal}
+          setUserInfo={setUserInfo} 
+        />
+      <LoginModal isOpen={loginModalIsOpen} onRequestClose={closeLoginModal} setUserInfo={setUserInfo} />
       <SignUpModal isOpen={signupModalIsOpen} onRequestClose={closeSignupModal} />
       <EditProfileModal isOpen={editProfileModalIsOpen} onRequestClose={closeEditProfileModal} userInfo={userInfo} setUserInfo={setUserInfo} />
       <ResetPasswordModal isOpen={resetPasswordModalIsOpen} onRequestClose={closeResetPasswordModal} userInfo={userInfo} />
       <Banner />
       <div>
         <h1 style={{ textAlign: 'center' }}>Explore our book collection</h1>
-        <BookList booksPerPage={12} userInfo={userInfo} />
+        <BookList booksPerPage={12} userInfo={userInfo} /> {/* Pass userInfo as a prop */}
       </div>
     </div>
   );
+  
 };
 
 export default Home;

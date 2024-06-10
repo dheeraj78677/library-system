@@ -1,7 +1,7 @@
 import React from 'react';
 import './Navbar.css';
 
-const Navbar = ({ isLoggedIn, userInfo, onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal }) => {
+const Navbar = ({ isLoggedIn,  onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal }) => {
   console.log('isLoggedIn ', isLoggedIn);
 
   return (

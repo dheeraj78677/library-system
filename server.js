@@ -249,7 +249,7 @@ app.get('/api/download-sample', (req, res) => {
 
   // Route to fetch all users
 app.get('/users', (req, res) => {  
-    const sql = 'SELECT id, firstName, lastName, email FROM users';
+    const sql = 'SELECT id, firstName, lastName, email FROM users where isadmin == 0';
     db.query(sql, (err, results) => {
       if (err) {
         console.error('Error fetching users:', err.message);
@@ -272,7 +272,7 @@ app.get('/users', (req, res) => {
       res.status(200).send({ message: 'User(s) deleted successfully' });
     });
   });
-  
+
 app.listen(port, '0.0.0.0',() => {
   console.log(`Server running on port ${port}`);
 });

@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
-
+import React from 'react';
 import './Navbar.css';
 
 const Navbar = ({ isLoggedIn, onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal }) => {
-  console.log('isLoggedIn ',isLoggedIn);
+  // If isLoggedIn has a value, do not render the Navbar
+  if (isLoggedIn) {
+    return null;
+  }
+
   return (
     <div className="navbar">
-      <img src={`${process.env.PUBLIC_URL}/logo.jpg`} alt="RMIT Logo" />
+      <img src={`${process.env.PUBLIC_URL}/logo.jpg`} alt="RMIT Logo" className="navbar-logo" />
       <h1 className="navbar-title">RMIT LIBRARY</h1>
-      {isLoggedIn ? (
-        <>
-          <button className="navbar-button" onClick={onEditProfile}>Edit Profile</button>
-          <button className="navbar-button" onClick={onResetPassword}>Reset Password</button>
-          <button className="navbar-button" onClick={onLogout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <button className="navbar-button" onClick={openLoginModal}>Login</button>
-          <button className="navbar-button" onClick={openSignupModal}>Sign Up</button>
-        </>
-      )}
+      <div className="navbar-buttons"></div>
+      <div className="navbar-buttons">
+
+            <button className="navbar-button" onClick={onEditProfile}>Edit Profile</button>
+            <button className="navbar-button" onClick={onResetPassword}>Reset Password</button>
+            <button className="navbar-button" onClick={onLogout}>Logout</button>
+          
+       
+            <button className="navbar-button" onClick={openLoginModal}>Login</button>
+            <button className="navbar-button" onClick={openSignupModal}>Sign Up</button>
+      </div>
+  
     </div>
   );
 };

@@ -34,7 +34,7 @@ const Home = () => {
 
   return (
     <div>
-       {userInfo && (
+      {!userInfo && (
         <Navbar
           isLoggedIn={!!userInfo}
           onLogout={handleLogout}
@@ -43,7 +43,7 @@ const Home = () => {
           openLoginModal={openLoginModal}
           openSignupModal={openSignupModal}
         />
-      )}
+    )}
       <LoginModal isOpen={loginModalIsOpen} onRequestClose={closeLoginModal} setUserInfo={setUserInfo} />
       <SignUpModal isOpen={signupModalIsOpen} onRequestClose={closeSignupModal} />
       <EditProfileModal isOpen={editProfileModalIsOpen} onRequestClose={closeEditProfileModal} userInfo={userInfo} setUserInfo={setUserInfo} />

@@ -174,19 +174,6 @@ app.get('/api/books', async (req, res) => {
   }
 });
 
-// Endpoint to handle password reset
-app.post('/reset-password', async (req, res) => {
-    const { email, password } = req.body;
-    const encryptedPassword = encrypt(password);
-  
-    const sql = `UPDATE users SET password = ? WHERE email = ?`;
-    db.query(sql, [encryptedPassword, email], (err, result) => {
-      if (err) {
-        return res.status(500).send('Failed to reset password.');
-      }
-      res.status(200).send('Password reset successfully.');
-    });
-  });
   
   // Endpoint to handle profile update
 app.post('/update-profile', async (req, res) => {

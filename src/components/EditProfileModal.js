@@ -30,7 +30,7 @@ const EditProfileModal = ({ isOpen, onRequestClose, userInfo, setUserInfo }) => 
     tempErrors.firstName = formData.firstName ? "" : "First Name is required.";
     tempErrors.lastName = formData.lastName ? "" : "Last Name is required.";
     tempErrors.email = formData.email ? (/^[^@\s]+@[^@\s]+\.[^@\s]+$/).test(formData.email) ? "" : "Email is not valid." : "Email is required.";
-    tempErrors.username = formData.username ? "" : "Username is required.";
+    tempErrors.username = formData.username ? formData.username.length > 6 ? "" : "Username must be more than 6 characters." : "Username is required.";   
 
     setErrors(tempErrors);
 

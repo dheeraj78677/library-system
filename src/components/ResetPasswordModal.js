@@ -16,7 +16,7 @@ const ResetPasswordModal = ({ isOpen, onRequestClose, userInfo }) => {
   const validate = () => {
     let tempErrors = {};
     tempErrors.oldPassword = formData.oldPassword ? "" : "Old Password is required.";
-    tempErrors.newPassword = formData.newPassword ? formData.newPassword.length >= 6 ? "" : "New Password must be at least 6 characters long." : "New Password is required.";
+    tempErrors.newPassword = formData.newPassword ? formData.newPassword.length > 6 ? /^(?=.*[0-9])(?=.*[!@#$%^&*])/.test(formData.newPassword) ? "" : "Password must include at least one digit and one special character." : "Password must be more than 6 characters." : "Password is required.";
 
     setErrors(tempErrors);
 

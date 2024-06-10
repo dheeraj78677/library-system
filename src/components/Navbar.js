@@ -2,10 +2,10 @@ import React from 'react';
 import './Navbar.css';
 
 const Navbar = ({ isLoggedIn, onLogout, onEditProfile, onResetPassword, openLoginModal, openSignupModal }) => {
-  // If isLoggedIn has a value, do not render the Navbar
-  if (isLoggedIn) {
-    return null;
-  }
+  // // If isLoggedIn has a value, do not render the Navbar
+  // if (isLoggedIn) {
+  //   return null;
+  // }
 
   return (
     <div className="navbar">

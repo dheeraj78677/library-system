@@ -5,8 +5,6 @@ const mysql = require('mysql2');
 const crypto = require('crypto');
 const path = require('path');
 const axios = require('axios');
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -17,12 +15,12 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/build')));
 
 // Redirect HTTP to HTTPS
-app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(['https://', req.get('Host'), req.url].join(''));
-  }
-  next();
-});
+ app.use((req, res, next) => {
+     if (req.headers['x-forwarded-proto'] !== 'https') {
+       return res.redirect(['https://', req.get('Host'), req.url].join(''));
+     }
+     next();
+   });
 
 // MySQL Connection
 const db = mysql.createConnection({
@@ -114,41 +112,42 @@ app.post('/login', async (req, res) => {
 
   const sql = `SELECT * FROM users`;
   db.query(sql, async (err, results) => {
-    if (err) {
-      console.error('Error fetching user:', err.message);
-      return res.status(500).send('Server error.');
-    }
-
-    let userFound = null;
-    for (let user of results) {
-      try {
-        const decryptedUsername = decrypt(user.username);
-        if (decryptedUsername === username) {
-          userFound = user;
-          break;
+        if (err) {
+        console.error('Error fetching user:', err.message);
+        return res.status(500).send('Server error.');
         }
-      } catch (error) {
-        console.error('Error decrypting username:', error.message);
-      }
-    }
 
-    if (!userFound) {
-      console.error('User does not exist:', username);
-      return res.status(404).send({ success: false, message: 'User does not exist.' });
-    }
+        let userFound = null;
+        for (let user of results) {
+        try {
+            const decryptedUsername = decrypt(user.username);
+            if (decryptedUsername === username) {
+            userFound = user;
+            break;
+            }
+        } catch (error) {
+            console.error('Error decrypting username:', error.message);
+        }
+        }
 
-    try {
-      const decryptedPassword = decrypt(userFound.password);
-      if (decryptedPassword !== password) {
-        console.error('Incorrect username or password');
-        return res.status(401).send({ success: false, message: 'Incorrect username or password.' });
-      }
+        if (!userFound) {
+        console.error('User does not exist:', username);
+        return res.status(404).send({ success: false, message: 'User does not exist.' });
+        }
 
-      res.status(200).send({ success: true, user: userFound });
-    } catch (error) {
-      console.error('Error decrypting password:', error.message);
-      res.status(500).send('Server error.');
-    }
+        try {
+        const decryptedPassword = decrypt(userFound.password);
+        if (decryptedPassword !== password) {
+            console.error('Incorrect username or password');
+            return res.status(401).send({ success: false, message: 'Incorrect username or password.' });
+        }
+
+        res.status(200).send({ success: true, user: userFound });
+        console.log('user found ',userFound)
+        } catch (error) {
+        console.error('Error decrypting password:', error.message);
+        res.status(500).send('Server error.');
+        }
   });
 });
 
@@ -172,82 +171,62 @@ app.get('/api/books', async (req, res) => {
   }
 });
 
-// Endpoint to generate and download a sample PDF
-app.get('/api/download-sample', (req, res) => {
-  const doc = new PDFDocument();
-  const filePath = path.join(__dirname, 'sample.pdf');
-
-  doc.pipe(fs.createWriteStream(filePath));
-  doc.text('This is a sample PDF for download.', {
-    align: 'center',
-  });
-  doc.end();
-
-  doc.on('finish', () => {
-    res.download(filePath, 'sample.pdf', (err) => {
-      if (err) {
-        console.error('Error downloading sample PDF:', err.message);
-      }
-      fs.unlinkSync(filePath); // Delete the file after download
-    });
-  });
-});
-
 // Endpoint to handle password reset
 app.post('/reset-password', async (req, res) => {
-  const { email, password } = req.body;
-  const encryptedPassword = encrypt(password);
-
-  const sql = `UPDATE users SET password = ? WHERE email = ?`;
-  db.query(sql, [encryptedPassword, email], (err, result) => {
-    if (err) {
-      return res.status(500).send('Failed to reset password.');
-    }
-    res.status(200).send('Password reset successfully.');
-  });
-});
-
-// Endpoint to handle profile update
-app.post('/update-profile', async (req, res) => {
-  const { id, firstName, lastName, email, username } = req.body;
-
-  const sql = `UPDATE users SET firstName = ?, lastName = ?, email = ?, username = ? WHERE id = ?`;
-  db.query(sql, [firstName, lastName, email, username, id], (err, result) => {
-    if (err) {
-      return res.status(500).send('Failed to update profile.');
-    }
-    res.status(200).send('Profile updated successfully.');
-  });
-});
-
-// Endpoint to handle password reset with old password check
-app.post('/reset-password', async (req, res) => {
-  const { email, oldPassword, newPassword } = req.body;
-
-  const sql = `SELECT * FROM users WHERE email = ?`;
-  db.query(sql, [email], (err, result) => {
-    if (err || result.length === 0) {
-      return res.status(404).send('Email not found.');
-    }
-
-    const user = result[0];
-    const decryptedOldPassword = decrypt(user.password);
-
-    if (decryptedOldPassword !== oldPassword) {
-      return res.status(400).send('Old password is incorrect.');
-    }
-
-    const encryptedNewPassword = encrypt(newPassword);
-    const updateSql = `UPDATE users SET password = ? WHERE email = ?`;
-    db.query(updateSql, [encryptedNewPassword, email], (err, result) => {
+    const { email, password } = req.body;
+    const encryptedPassword = encrypt(password);
+  
+    const sql = `UPDATE users SET password = ? WHERE email = ?`;
+    db.query(sql, [encryptedPassword, email], (err, result) => {
       if (err) {
         return res.status(500).send('Failed to reset password.');
       }
       res.status(200).send('Password reset successfully.');
     });
   });
-});
+  
+  // Endpoint to handle profile update
+app.post('/update-profile', async (req, res) => {
+    const { id, firstName, lastName, email, username } = req.body;
+  
+    const sql = `UPDATE users SET firstName = ?, lastName = ?, email = ?, username = ? WHERE id = ?`;
+    db.query(sql, [firstName, lastName, email, username, id], (err, result) => {
+      if (err) {
+        return res.status(500).send('Failed to update profile.');
+      }
+      res.status(200).send('Profile updated successfully.');
+    });
+  });
+  
+  // Endpoint to handle password reset with old password check
+  app.post('/reset-password', async (req, res) => {
+    const { email, oldPassword, newPassword } = req.body;
+  
+    const sql = `SELECT * FROM users WHERE email = ?`;
+    db.query(sql, [email], (err, result) => {
+      if (err || result.length === 0) {
+        return res.status(404).send('Email not found.');
+      }
+  
+      const user = result[0];
+      const decryptedOldPassword = decrypt(user.password);
+  
+      if (decryptedOldPassword !== oldPassword) {
+        return res.status(400).send('Old password is incorrect.');
+      }
+  
+      const encryptedNewPassword = encrypt(newPassword);
+      const updateSql = `UPDATE users SET password = ? WHERE email = ?`;
+      db.query(updateSql, [encryptedNewPassword, email], (err, result) => {
+        if (err) {
+          return res.status(500).send('Failed to reset password.');
+        }
+        res.status(200).send('Password reset successfully.');
+      });
+    });
+  });
+  
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, '0.0.0.0',() => {
   console.log(`Server running on port ${port}`);
 });

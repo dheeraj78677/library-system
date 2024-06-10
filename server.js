@@ -5,6 +5,8 @@ const mysql = require('mysql2');
 const crypto = require('crypto');
 const path = require('path');
 const axios = require('axios');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -150,7 +152,46 @@ app.post('/login', async (req, res) => {
   });
 });
 
+// Endpoint to fetch books from Open Library
+app.get('/api/books', async (req, res) => {
+  try {
+    const response = await axios.get('https://openlibrary.org/search.json?q=programming&limit=96');
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching books from Open Library:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Headers:', error.response.headers);
+      console.error('Data:', error.response.data);
+    } else if (error.request) {
+      console.error('Request:', error.request);
+    } else {
+      console.error('Error', error.message);
+    }
+    res.status(500).send('Error fetching books.');
+  }
+});
 
+// Endpoint to generate and download a sample PDF
+app.get('/api/download-sample', (req, res) => {
+  const doc = new PDFDocument();
+  const filePath = path.join(__dirname, 'sample.pdf');
+
+  doc.pipe(fs.createWriteStream(filePath));
+  doc.text('This is a sample PDF for download.', {
+    align: 'center',
+  });
+  doc.end();
+
+  doc.on('finish', () => {
+    res.download(filePath, 'sample.pdf', (err) => {
+      if (err) {
+        console.error('Error downloading sample PDF:', err.message);
+      }
+      fs.unlinkSync(filePath); // Delete the file after download
+    });
+  });
+});
 
 // Endpoint to handle password reset
 app.post('/reset-password', async (req, res) => {
@@ -207,33 +248,6 @@ app.post('/reset-password', async (req, res) => {
   });
 });
 
-// Endpoint to fetch books from Project Gutenberg
-app.get('/api/books', async (req, res) => {
-    try {
-      const response = await axios.get('https://gutendex.com/books');
-      res.json(response.data);
-    } catch (error) {
-      console.error('Error fetching books from Project Gutenberg:', error.message);
-      res.status(500).send('Error fetching books.');
-    }
-  });
-  
-  // Endpoint to handle book download from Project Gutenberg
-  app.get('/api/download/:bookId', async (req, res) => {
-    const { bookId } = req.params;
-  
-    try {
-      const response = await axios.get(`https://www.gutenberg.org/ebooks/${bookId}.zip`, {
-        responseType: 'blob',
-      });
-      res.setHeader('Content-Disposition', `attachment; filename=${bookId}.zip`);
-      res.send(response.data);
-    } catch (error) {
-      console.error('Error downloading book:', error.message);
-      res.status(500).send('Error downloading book.');
-    }
-  });
-  
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
 });

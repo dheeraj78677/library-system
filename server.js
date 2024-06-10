@@ -190,14 +190,21 @@ app.post('/reset-password', async (req, res) => {
   // Endpoint to handle profile update
 app.post('/update-profile', async (req, res) => {
     const { id, firstName, lastName, email, username } = req.body;
-  
-    const sql = `UPDATE users SET firstName = ?, lastName = ?, email = ?, username = ? WHERE id = ?`;
-    db.query(sql, [firstName, lastName, email, username, id], (err, result) => {
-      if (err) {
-        return res.status(500).send('Failed to update profile.');
+    try{
+        const encryptedUsername = encrypt(username);
+        const sql = `UPDATE users SET firstName = ?, lastName = ?, email = ?, username = ? WHERE id = ?`;
+        db.query(sql, [firstName, lastName, email, encryptedUsername, id], (err, result) => {
+          if (err) {
+            return res.status(500).send('Failed to update profile.');
+          }
+          res.status(200).send('Profile updated successfully.');
+        });
+    } catch (error) {
+        console.error('Error processing request:', error.message);
+        res.status(500).send('Server error.');
       }
-      res.status(200).send('Profile updated successfully.');
-    });
+    
+   
   });
   
   // Endpoint to handle password reset with old password check

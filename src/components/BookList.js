@@ -89,10 +89,17 @@ const BookList = ({ userInfo }) => {
         <p>Author: {selectedBook.author_name ? selectedBook.author_name.join(', ') : 'Unknown Author'}</p>
         <p>Introduction: {selectedBook.first_sentence ? selectedBook.first_sentence : 'No introduction available.'}</p>
         <button onClick={closeModal}>Back</button>
-        {userInfo && (
+        
+        {userInfo ?(
+            <>
         <button onClick={downloadSamplePDF}>
           Download
         </button>
+        </>
+      ):(
+        <>
+        <p>Please login/signUp to download the content!</p>
+        </>
       )}
       </Modal>
     );

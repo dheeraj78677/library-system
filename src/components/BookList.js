@@ -6,6 +6,7 @@ import './BookList.css';
 Modal.setAppElement('#root');
 
 const BookList = ({ userInfo }) => {
+    console.log(userInfo);
   const [allBooks, setAllBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +14,7 @@ const BookList = ({ userInfo }) => {
   const booksPerPage = 16; // 4 rows x 4 books per row
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchBooks = async () => {s
       const response = await axios.get('/api/books');
       console.log("hello")
       setAllBooks(response.data.docs);
